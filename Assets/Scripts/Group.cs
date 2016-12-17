@@ -1,19 +1,20 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class Group : MonoBehaviour
 {
-
+    float fallInterval = 0.05f;
     float lastFall = 0;
     private const float timeToCharge = 0.1f;
     private float chargeTimer = 0.0f;
+    
 
     // Use this for initialization
     void Start()
     {
         if (!isValidGridPos())
         {
-            Debug.Log("GAME OVER");
             Destroy(gameObject);
         }
     }
@@ -22,7 +23,7 @@ public class Group : MonoBehaviour
     void Update()
     {
         // Move Left
-        if (canMoveLeft())
+        if (playerMoveLeft())
         {
             // Modify position
             transform.position += new Vector3(-1, 0, 0);
@@ -37,7 +38,7 @@ public class Group : MonoBehaviour
         }
 
         // Move Right
-        else if (canMoveRight())
+        else if (playerMoveRight())
         {
             // Modify position
             transform.position += new Vector3(1, 0, 0);
@@ -51,7 +52,7 @@ public class Group : MonoBehaviour
                 transform.position += new Vector3(-1, 0, 0);
         }
 
-        else if (canRotate())
+        else if (playerRotate())
         {
             transform.Rotate(0, 0, -90);
 
@@ -64,7 +65,7 @@ public class Group : MonoBehaviour
                 transform.Rotate(0, 0, 90);
         }
 
-        else if (canMoveDown())
+        else if (playerMoveDown())
         {
             // Modify position
             transform.position += new Vector3(0, -1, 0);
@@ -117,7 +118,7 @@ public class Group : MonoBehaviour
         }
     }
 
-    bool canMoveLeft()
+    bool playerMoveLeft()
     {
         if ((Input.GetKey(KeyCode.LeftArrow) && isDelayed()) ||        // hold
             Input.GetKeyDown(KeyCode.LeftArrow))                       // press
@@ -128,7 +129,7 @@ public class Group : MonoBehaviour
         return false;
     }
 
-    bool canMoveRight()
+    bool playerMoveRight()
     {
         if ((Input.GetKey(KeyCode.RightArrow) && isDelayed()) ||        // hold
             Input.GetKeyDown(KeyCode.RightArrow))                       // press
@@ -138,10 +139,10 @@ public class Group : MonoBehaviour
         }
         return false;
     }
-    bool canMoveDown()
+    bool playerMoveDown()
     {
-        if ( ((Input.GetKey(KeyCode.DownArrow) || Time.time - lastFall >= 1) && isDelayed()) ||           // hold
-            (Input.GetKeyDown(KeyCode.DownArrow) || Time.time - lastFall >= 1)                            // press
+        if ( ((Input.GetKey(KeyCode.DownArrow) || Time.time - lastFall >= fallInterval) && isDelayed()) ||           // hold
+            (Input.GetKeyDown(KeyCode.DownArrow) || Time.time - lastFall >= fallInterval)                            // press
             )                         
         {
             ResetChargeTimer();
@@ -149,10 +150,9 @@ public class Group : MonoBehaviour
         }
         return false;
     }
-    bool canRotate()
+    bool playerRotate()
     {
-        if ((Input.GetKey(KeyCode.UpArrow) && isDelayed()) ||        // hold
-            Input.GetKeyDown(KeyCode.UpArrow))                       // press
+        if (Input.GetKeyDown(KeyCode.UpArrow))                       // press
         {
             ResetChargeTimer();
             return true;
