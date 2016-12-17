@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using Random = UnityEngine.Random;
 
 public class Spawner : MonoBehaviour {
 
     public GameObject[] blocks;
+    public Text scoreText;
 	// Use this for initialization
 	void Start () {
         spawnNext();

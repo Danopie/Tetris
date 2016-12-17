@@ -7,6 +7,9 @@ public class Grid : MonoBehaviour {
     public static int h = 20;
     public static Transform[,] grid = new Transform[w, h];
 
+    public delegate void UserScore();
+    public static event UserScore OnUserScored;
+
     public static Vector2 roundVec2(Vector2 v)
     {
         return new Vector2(Mathf.Round(v.x),
@@ -68,6 +71,7 @@ public class Grid : MonoBehaviour {
                 deleteRow(y);
                 decreaseRowsAbove(y + 1);
                 --y;
+                OnUserScored();
             }
         }
     }

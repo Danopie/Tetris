@@ -1,20 +1,20 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
-using System;
 
 public class Group : MonoBehaviour
 {
-
+    float fallInterval = 0.05f;
     float lastFall = 0;
     private const float timeToCharge = 0.1f;
     private float chargeTimer = 0.0f;
+    
 
     // Use this for initialization
     void Start()
     {
         if (!isValidGridPos())
         {
-            Debug.Log("GAME OVER");
             Destroy(gameObject);
         }
     }
@@ -23,7 +23,7 @@ public class Group : MonoBehaviour
     void Update()
     {
         // Move Left
-        if (canMoveLeft())
+        if (playerMoveLeft())
         {
             // Modify position
             transform.position += new Vector3(-1, 0, 0);
@@ -38,7 +38,7 @@ public class Group : MonoBehaviour
         }
 
         // Move Right
-        else if (canMoveRight())
+        else if (playerMoveRight())
         {
             // Modify position
             transform.position += new Vector3(1, 0, 0);
@@ -52,7 +52,7 @@ public class Group : MonoBehaviour
                 transform.position += new Vector3(-1, 0, 0);
         }
 
-        else if (canRotate())
+        else if (playerRotate())
         {
             transform.Rotate(0, 0, -90);
 
@@ -65,7 +65,7 @@ public class Group : MonoBehaviour
                 transform.Rotate(0, 0, 90);
         }
 
-        else if (canMoveDown())
+        else if (playerMoveDown())
         {
             // Modify position
             transform.position += new Vector3(0, -1, 0);
@@ -82,9 +82,6 @@ public class Group : MonoBehaviour
 
                 // Clear filled horizontal lines
                 Grid.deleteFullRows();
-
-                // Impact effect
-                ShowImpactEffect();
 
                 // Spawn next Group
                 FindObjectOfType<Spawner>().spawnNext();
@@ -121,16 +118,7 @@ public class Group : MonoBehaviour
         }
     }
 
-    private void ShowImpactEffect()
-    {
-        GameObject metalImpact = Instantiate(Resources.Load("MetalImpact")) as GameObject;
-        metalImpact.transform.position = new Vector3(
-                                                       transform.position.x,
-                                                       transform.position.y - 1,
-                                                       transform.position.z);
-    }
-
-    bool canMoveLeft()
+    bool playerMoveLeft()
     {
         if ((Input.GetKey(KeyCode.LeftArrow) && isDelayed()) ||        // hold
             Input.GetKeyDown(KeyCode.LeftArrow))                       // press
@@ -141,7 +129,7 @@ public class Group : MonoBehaviour
         return false;
     }
 
-    bool canMoveRight()
+    bool playerMoveRight()
     {
         if ((Input.GetKey(KeyCode.RightArrow) && isDelayed()) ||        // hold
             Input.GetKeyDown(KeyCode.RightArrow))                       // press
@@ -151,10 +139,10 @@ public class Group : MonoBehaviour
         }
         return false;
     }
-    bool canMoveDown()
+    bool playerMoveDown()
     {
-        if ( ((Input.GetKey(KeyCode.DownArrow) || Time.time - lastFall >= 1) && isDelayed()) ||           // hold
-            (Input.GetKeyDown(KeyCode.DownArrow) || Time.time - lastFall >= 1)                            // press
+        if ( ((Input.GetKey(KeyCode.DownArrow) || Time.time - lastFall >= fallInterval) && isDelayed()) ||           // hold
+            (Input.GetKeyDown(KeyCode.DownArrow) || Time.time - lastFall >= fallInterval)                            // press
             )                         
         {
             ResetChargeTimer();
@@ -162,10 +150,9 @@ public class Group : MonoBehaviour
         }
         return false;
     }
-    bool canRotate()
+    bool playerRotate()
     {
-        if ((Input.GetKey(KeyCode.UpArrow) && isDelayed()) ||        // hold
-            Input.GetKeyDown(KeyCode.UpArrow))                       // press
+        if (Input.GetKeyDown(KeyCode.UpArrow))                       // press
         {
             ResetChargeTimer();
             return true;
@@ -202,9 +189,7 @@ public class Group : MonoBehaviour
             // Block in grid cell (and not part of same group)?
             if (Grid.grid[(int)v.x, (int)v.y] != null &&
                 Grid.grid[(int)v.x, (int)v.y].parent != transform)
-            {
                 return false;
-            }
         }
         return true;
     }
