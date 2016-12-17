@@ -1,22 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Group : MonoBehaviour {
+public class Group : MonoBehaviour
+{
 
     float lastFall = 0;
+    private const float timeToCharge = 0.1f;
+    private float chargeTimer = 0.0f;
+
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         if (!isValidGridPos())
         {
             Debug.Log("GAME OVER");
             Destroy(gameObject);
         }
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
         // Move Left
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (canMoveLeft())
         {
             // Modify position
             transform.position += new Vector3(-1, 0, 0);
@@ -31,7 +37,7 @@ public class Group : MonoBehaviour {
         }
 
         // Move Right
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        else if (canMoveRight())
         {
             // Modify position
             transform.position += new Vector3(1, 0, 0);
@@ -45,7 +51,7 @@ public class Group : MonoBehaviour {
                 transform.position += new Vector3(-1, 0, 0);
         }
 
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        else if (canRotate())
         {
             transform.Rotate(0, 0, -90);
 
@@ -58,8 +64,7 @@ public class Group : MonoBehaviour {
                 transform.Rotate(0, 0, 90);
         }
 
-        else if (Input.GetKeyDown(KeyCode.DownArrow) ||
-         Time.time - lastFall >= 1)
+        else if (canMoveDown())
         {
             // Modify position
             transform.position += new Vector3(0, -1, 0);
@@ -85,7 +90,7 @@ public class Group : MonoBehaviour {
             }
 
             lastFall = Time.time;
-            if (Time.time - lastFall >= 1) 
+            if (Time.time - lastFall >= 1)
             {
                 transform.position += new Vector3(0, -1, 0);
 
@@ -110,6 +115,65 @@ public class Group : MonoBehaviour {
                 }
             }
         }
+    }
+
+    bool canMoveLeft()
+    {
+        if ((Input.GetKey(KeyCode.LeftArrow) && isDelayed()) ||        // hold
+            Input.GetKeyDown(KeyCode.LeftArrow))                       // press
+        {
+            ResetChargeTimer();
+            return true;
+        }
+        return false;
+    }
+
+    bool canMoveRight()
+    {
+        if ((Input.GetKey(KeyCode.RightArrow) && isDelayed()) ||        // hold
+            Input.GetKeyDown(KeyCode.RightArrow))                       // press
+        {
+            ResetChargeTimer();
+            return true;
+        }
+        return false;
+    }
+    bool canMoveDown()
+    {
+        if ( ((Input.GetKey(KeyCode.DownArrow) || Time.time - lastFall >= 1) && isDelayed()) ||           // hold
+            (Input.GetKeyDown(KeyCode.DownArrow) || Time.time - lastFall >= 1)                            // press
+            )                         
+        {
+            ResetChargeTimer();
+            return true;
+        }
+        return false;
+    }
+    bool canRotate()
+    {
+        if ((Input.GetKey(KeyCode.UpArrow) && isDelayed()) ||        // hold
+            Input.GetKeyDown(KeyCode.UpArrow))                       // press
+        {
+            ResetChargeTimer();
+            return true;
+        }
+        return false;
+    }
+
+    void ResetChargeTimer()
+    {
+        chargeTimer = 0f;
+    }
+
+    bool isDelayed()
+    {
+        chargeTimer += Time.deltaTime;
+        if (chargeTimer >= timeToCharge)
+        {
+            ResetChargeTimer();
+            return true;
+        }
+        return false;
     }
 
     bool isValidGridPos()
