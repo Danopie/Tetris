@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class Group : MonoBehaviour
 {
@@ -82,6 +83,9 @@ public class Group : MonoBehaviour
                 // Clear filled horizontal lines
                 Grid.deleteFullRows();
 
+                // Impact effect
+                ShowImpactEffect();
+
                 // Spawn next Group
                 FindObjectOfType<Spawner>().spawnNext();
 
@@ -115,6 +119,15 @@ public class Group : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void ShowImpactEffect()
+    {
+        GameObject metalImpact = Instantiate(Resources.Load("MetalImpact")) as GameObject;
+        metalImpact.transform.position = new Vector3(
+                                                       transform.position.x,
+                                                       transform.position.y - 1,
+                                                       transform.position.z);
     }
 
     bool canMoveLeft()
@@ -189,7 +202,9 @@ public class Group : MonoBehaviour
             // Block in grid cell (and not part of same group)?
             if (Grid.grid[(int)v.x, (int)v.y] != null &&
                 Grid.grid[(int)v.x, (int)v.y].parent != transform)
+            {
                 return false;
+            }
         }
         return true;
     }
