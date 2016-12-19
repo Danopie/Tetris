@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System;
 
 public class Group : MonoBehaviour
 {
@@ -58,14 +59,13 @@ public class Group : MonoBehaviour
         else if (playerRotate())
         {
             transform.Rotate(0, 0, -90);
-
             // See if valid
-            if (isValidGridPos())
-                // It's valid. Update grid.
-                updateGrid();
-            else
-                // It's not valid. revert.
-                transform.Rotate(0, 0, 90);
+            if (!isValidGridPos())
+                moveToValidGridPos();
+
+            // update grid
+            updateGrid();
+
         }
 
         else if (playerMoveDown())
@@ -100,6 +100,41 @@ public class Group : MonoBehaviour
 
             lastFall = Time.time;
         }
+    }
+
+    private void moveToValidGridPos()
+    {
+        Vector3 backup = transform.position;
+        Debug.Log("Left 1");
+        transform.position += new Vector3(-1, 0, 0);
+        if (isValidGridPos())
+            return;
+        Debug.Log("Left 2");
+        transform.position += new Vector3(-1, 0, 0);
+        if (isValidGridPos())
+            return;
+
+        Debug.Log("Left 3");
+        transform.position += new Vector3(-1, 0, 0);
+        if (isValidGridPos())
+            return;
+
+        Debug.Log("Right 1");
+        transform.position += new Vector3(4, 0, 0);
+        if (isValidGridPos())
+            return;
+
+        Debug.Log("Right 2");
+        transform.position += new Vector3(1, 0, 0);
+        if (isValidGridPos())
+            return;
+
+        Debug.Log("Right 3");
+        transform.position += new Vector3(1, 0, 0);
+        if (isValidGridPos())
+            return;
+        // if cant find valid position
+        transform.position = backup;
     }
 
     private void ShowImpactEffect()
