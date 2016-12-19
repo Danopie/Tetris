@@ -61,7 +61,8 @@ public class Group : MonoBehaviour
             transform.Rotate(0, 0, -90);
             // See if valid
             if (!isValidGridPos())
-                moveToValidGridPos();
+                if (!moveToValidGridPos())   // I dont know where to go
+                    transform.Rotate(0, 0, 90);
 
             // update grid
             updateGrid();
@@ -86,7 +87,7 @@ public class Group : MonoBehaviour
                 transform.position += new Vector3(0, 1, 0);
 
                 // Impact effect
-                //ShowImpactEffect();
+                ShowImpactEffect();
 
                 // Clear filled horizontal lines
                 Grid.deleteFullRows();
@@ -102,39 +103,32 @@ public class Group : MonoBehaviour
         }
     }
 
-    private void moveToValidGridPos()
+    private bool moveToValidGridPos()
     {
         Vector3 backup = transform.position;
-        Debug.Log("Left 1");
-        transform.position += new Vector3(-1, 0, 0);
-        if (isValidGridPos())
-            return;
-        Debug.Log("Left 2");
-        transform.position += new Vector3(-1, 0, 0);
-        if (isValidGridPos())
-            return;
 
-        Debug.Log("Left 3");
+        // try left
         transform.position += new Vector3(-1, 0, 0);
         if (isValidGridPos())
-            return;
+            return true;
 
-        Debug.Log("Right 1");
+        // left again
+        transform.position += new Vector3(-1, 0, 0);
+        if (isValidGridPos())
+            return true;
+
+        // try right
         transform.position += new Vector3(4, 0, 0);
         if (isValidGridPos())
-            return;
-
-        Debug.Log("Right 2");
+            return true;
+        // right again
         transform.position += new Vector3(1, 0, 0);
         if (isValidGridPos())
-            return;
+            return true;
 
-        Debug.Log("Right 3");
-        transform.position += new Vector3(1, 0, 0);
-        if (isValidGridPos())
-            return;
         // if cant find valid position
         transform.position = backup;
+        return false;
     }
 
     private void ShowImpactEffect()
