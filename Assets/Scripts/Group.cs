@@ -86,7 +86,7 @@ public class Group : MonoBehaviour
                 transform.position += new Vector3(0, 1, 0);
 
                 // Impact effect
-                ShowImpactEffect();
+                //ShowImpactEffect();
 
                 // Clear filled horizontal lines
                 Grid.deleteFullRows();
@@ -178,7 +178,7 @@ public class Group : MonoBehaviour
     }
     bool playerRotate()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))                       // press
+        if (Input.GetKeyDown(KeyCode.UpArrow) && this.name !="Block O(Clone)")      //Press and not block O              
         {
             ResetChargeTimer();
             return true;
