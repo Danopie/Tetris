@@ -85,6 +85,9 @@ public class Group : MonoBehaviour
                 // It's not valid. revert.
                 transform.position += new Vector3(0, 1, 0);
 
+                // Impact effect
+                ShowImpactEffect();
+
                 // Clear filled horizontal lines
                 Grid.deleteFullRows();
 
@@ -99,7 +102,14 @@ public class Group : MonoBehaviour
         }
     }
 
-
+    private void ShowImpactEffect()
+     {
+         GameObject metalImpact = Instantiate(Resources.Load("MetalImpact")) as GameObject;
+         metalImpact.transform.position = new Vector3(
+                                                        transform.position.x,
+                                                        transform.position.y - 1,
+                                                        transform.position.z);
+     }
     bool playerMoveLeft()
     {
         if ((Input.GetKey(KeyCode.LeftArrow) && isDelayed()) ||        // hold
