@@ -143,7 +143,7 @@ public class Group : MonoBehaviour
     }
     bool playerRotate()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow))                       // press
+        if (Input.GetKeyDown(KeyCode.UpArrow) && this.name !="Block O(Clone)")      //Press and not block O              
         {
             ResetChargeTimer();
             return true;
