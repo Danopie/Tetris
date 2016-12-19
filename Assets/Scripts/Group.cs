@@ -86,7 +86,7 @@ public class Group : MonoBehaviour
                 transform.position += new Vector3(0, 1, 0);
 
                 // Impact effect
-                ShowImpactEffect();
+                //ShowImpactEffect();
 
                 // Clear filled horizontal lines
                 Grid.deleteFullRows();
