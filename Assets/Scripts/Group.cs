@@ -4,17 +4,20 @@ using System.Collections;
 
 public class Group : MonoBehaviour
 {
-    float fallInterval = 0.5f;
-    float lastFall = 0;
+    private static float fallInterval = 1f;
+    private float lastFall = 0;
     private const float timeToCharge = 0.1f;
     private float chargeTimer = 0.0f;
-    
+
+    public delegate void GameOver();
+    public static event GameOver OnGameOver;
 
     // Use this for initialization
     void Start()
     {
         if (!isValidGridPos())
         {
+            OnGameOver();
             Destroy(gameObject);
         }
     }
@@ -67,6 +70,8 @@ public class Group : MonoBehaviour
 
         else if (playerMoveDown())
         {
+            if(fallInterval >=0.05f)
+                fallInterval -= 0.001f;
             // Modify position
             transform.position += new Vector3(0, -1, 0);
             // See if valid
@@ -80,9 +85,6 @@ public class Group : MonoBehaviour
                 // It's not valid. revert.
                 transform.position += new Vector3(0, 1, 0);
 
-                // Impact effect
-                ShowImpactEffect();
-
                 // Clear filled horizontal lines
                 Grid.deleteFullRows();
 
@@ -94,44 +96,10 @@ public class Group : MonoBehaviour
             }
 
             lastFall = Time.time;
-            if (Time.time - lastFall >= 1)
-            {
-                transform.position += new Vector3(0, -1, 0);
-
-                if (isValidGridPos())
-                {
-                    // It's valid. Update grid.
-                    updateGrid();
-                }
-                else
-                {
-                    // It's not valid. revert.
-                    transform.position += new Vector3(0, 1, 0);
-
-                    // Impact effect
-                    ShowImpactEffect();
-
-                    // Clear filled horizontal lines
-                    Grid.deleteFullRows();
-
-                    // Spawn next Group
-                    FindObjectOfType<Spawner>().spawnNext();
-
-                    // Disable script
-                    enabled = false;
-                }
-            }
         }
     }
 
-    private void ShowImpactEffect()
-    {
-        GameObject metalImpact = Instantiate(Resources.Load("MetalImpact")) as GameObject;
-        metalImpact.transform.position = new Vector3(
-                                                       transform.position.x,
-                                                       transform.position.y - 1,
-                                                       transform.position.z);
-    }
+
     bool playerMoveLeft()
     {
         if ((Input.GetKey(KeyCode.LeftArrow) && isDelayed()) ||        // hold
@@ -142,7 +110,6 @@ public class Group : MonoBehaviour
         }
         return false;
     }
-
     bool playerMoveRight()
     {
         if ((Input.GetKey(KeyCode.RightArrow) && isDelayed()) ||        // hold
@@ -155,9 +122,9 @@ public class Group : MonoBehaviour
     }
     bool playerMoveDown()
     {
-        if ( ((Input.GetKey(KeyCode.DownArrow) || Time.time - lastFall >= fallInterval) && isDelayed()) ||           // hold
+        if (((Input.GetKey(KeyCode.DownArrow) || Time.time - lastFall >= fallInterval) && isDelayed()) ||           // hold
             (Input.GetKeyDown(KeyCode.DownArrow) || Time.time - lastFall >= fallInterval)                            // press
-            )                         
+            )                                               
         {
             ResetChargeTimer();
             return true;
@@ -201,12 +168,13 @@ public class Group : MonoBehaviour
                 return false;
 
             // Block in grid cell (and not part of same group)?
-            if (Grid.grid[(int)v.x, (int)v.y] != null &&
-                Grid.grid[(int)v.x, (int)v.y].parent != transform)
-                return false;
+            if (Grid.grid[(int)v.x, (int)v.y] != null)
+                if(Grid.grid[(int)v.x, (int)v.y].parent != transform)
+                    return false;
         }
         return true;
     }
+
 
     void updateGrid()
     {
@@ -224,4 +192,5 @@ public class Group : MonoBehaviour
             Grid.grid[(int)v.x, (int)v.y] = child;
         }
     }
+
 }
