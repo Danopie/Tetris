@@ -5,7 +5,7 @@ using System;
 
 public class Group : MonoBehaviour
 {
-    private static float fallInterval = 1f;
+    private static float fallInterval = 1f; 
     private float lastFall = 0;
     private const float timeToCharge = 0.1f;
     private float chargeTimer = 0.0f;
@@ -19,8 +19,14 @@ public class Group : MonoBehaviour
         if (!isValidGridPos())
         {
             OnGameOver();
-            Destroy(gameObject);
+            Destroy(gameObject); 
         }
+    }
+
+    //Reset the fall interval when the scene reloads
+    public static void ResetFallInterval()
+    {
+        fallInterval = 1f;
     }
 
     // Update is called once per frame
