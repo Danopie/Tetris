@@ -5,23 +5,32 @@ using System.Collections;
 
 public class GUI : MonoBehaviour {
 
-    public Text scoreText;
-    public Text gameOverText;
+    
     private int scoreCount = 0;
 
+    Text score;
     GameObject[] pauseObjects;
+    GameObject[] gameOverObjects;
 
 	// Use this for initialization
 	void Start ()
     {
         Grid.OnUserScored += OnGUIScore;
         Group.OnGameOver += OnGUIGameOver;
-        scoreText.text = "Score: " + scoreCount;
+
+        score = GameObject.FindGameObjectWithTag("Score").GetComponent<Text>();
+        score.text = "Score: 0";
 
         Time.timeScale = 1;
         pauseObjects = GameObject.FindGameObjectsWithTag("ShowOnPause");
         hidePaused();
-	}
+
+        gameOverObjects = GameObject.FindGameObjectsWithTag("GameOver menu");
+        foreach(GameObject g in gameOverObjects)
+        {
+            g.SetActive(false);
+        }
+    }
 
     void Update()
     {
@@ -43,12 +52,29 @@ public class GUI : MonoBehaviour {
     void OnGUIScore()
     {
         scoreCount++;
-        scoreText.text = "Score: " + scoreCount;
+        score.text = "Score: " + scoreCount;
+    }
+
+    void UnsubscribeEvents()
+    {
+        //Unsubscribe the events so they don't reference to a destroyed object after reload
+        Grid.OnUserScored -= OnGUIScore;
+        Group.OnGameOver -= OnGUIGameOver;
     }
 
     void OnGUIGameOver()
     {
-        gameOverText.text = "Game Over";
+        foreach (GameObject g in gameOverObjects)
+        {
+            g.SetActive(true);
+
+            if(g.name == "Final score")
+            {
+                Text finalScore = g.GetComponent<Text>();
+                finalScore.text = "Score: " + scoreCount;
+            }
+        }
+
     }
 
     public void showPaused()
@@ -70,7 +96,7 @@ public class GUI : MonoBehaviour {
     //Reloads the scene
     public void Reload()
     {
-        Group.ResetFallInterval();
+        UnsubscribeEvents();
         SceneManager.LoadScene("Game");
     }
     
@@ -84,7 +110,7 @@ public class GUI : MonoBehaviour {
     //Switch to menu
     public void ToMenu()
     {
-        Group.ResetFallInterval();
+        UnsubscribeEvents();
         SceneManager.LoadScene("Menu");
     }
 

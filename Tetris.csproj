@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Resources\Script\MetalImpactScript.cs" />
+    <Compile Include="Assets\Scripts\Difficulty.cs" />
     <Compile Include="Assets\Scripts\GUI.cs" />
     <Compile Include="Assets\Scripts\Grid.cs" />
     <Compile Include="Assets\Scripts\Group.cs" />

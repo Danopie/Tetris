@@ -14,7 +14,7 @@ public class Spawner : MonoBehaviour {
     public void spawnNext()
     {
         int i = Random.Range(0, blocks.Length);
-        GameObject block = Instantiate(blocks[i], transform.position, Quaternion.identity);
+        Instantiate(blocks[i], transform.position, Quaternion.identity);
 
     }
 }

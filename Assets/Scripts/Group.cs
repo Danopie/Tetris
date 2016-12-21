@@ -5,7 +5,7 @@ using System;
 
 public class Group : MonoBehaviour
 {
-    private static float fallInterval = 1f; 
+    private float fallInterval = Difficulty.FallInterval; 
     private float lastFall = 0;
     private const float timeToCharge = 0.1f;
     private float chargeTimer = 0.0f;
@@ -19,14 +19,14 @@ public class Group : MonoBehaviour
         if (!isValidGridPos())
         {
             OnGameOver();
-            Destroy(gameObject); 
+            Destroy(gameObject);
         }
     }
 
     //Reset the fall interval when the scene reloads
-    public static void ResetFallInterval()
+    public void ResetFallInterval()
     {
-        fallInterval = 1f;
+        fallInterval = Difficulty.FallInterval;
     }
 
     // Update is called once per frame
@@ -77,8 +77,8 @@ public class Group : MonoBehaviour
 
         else if (playerMoveDown())
         {
-            if(fallInterval >=0.05f)
-                fallInterval -= 0.001f;
+            if(fallInterval >= Difficulty.IntervalLimit)
+                fallInterval -= Difficulty.IntervalDecreaseAmount;
             // Modify position
             transform.position += new Vector3(0, -1, 0);
             // See if valid
