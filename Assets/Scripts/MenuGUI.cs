@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MenuGUI : MonoBehaviour {
 
@@ -10,14 +11,19 @@ public class MenuGUI : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        Difficulty.DifficultyLevel = 1;
         optionObjects = GameObject.FindGameObjectsWithTag("Option menu");
         mainObjects = GameObject.FindGameObjectsWithTag("Main menu");
 
         foreach (GameObject g in optionObjects )
         {
             g.SetActive(false);
-        }
+
+            if(g.name == "Difficulty List")
+            {
+                Dropdown dd = g.GetComponent<Dropdown>();
+                dd.value = Difficulty.DifficultyLevel - 1;
+            }
+        }   
 
     }
 	

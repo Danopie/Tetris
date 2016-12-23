@@ -6,20 +6,43 @@ using System.Collections;
 public class GUI : MonoBehaviour {
 
     
-    private int scoreCount = 0;
+    int scoreCount = 0;
+    float timeLeft;
 
+    Text time;
     Text score;
+    Text scoreToWin;
     GameObject[] pauseObjects;
     GameObject[] gameOverObjects;
-
+    GameObject[] uiObjects;
 	// Use this for initialization
 	void Start ()
     {
         Grid.OnUserScored += OnGUIScore;
         Group.OnGameOver += OnGUIGameOver;
 
-        score = GameObject.FindGameObjectWithTag("Score").GetComponent<Text>();
-        score.text = "Score: 0";
+        uiObjects = GameObject.FindGameObjectsWithTag("UI");
+        foreach(GameObject g in uiObjects)
+        {
+            if(g.name == "Score")
+            {
+                score = g.GetComponent<Text>();
+                score.text = "Score: 0";
+            }
+
+            if (g.name == "Time")
+            {
+                timeLeft = Difficulty.TimeLeft;
+                time = g.GetComponent<Text>();
+                time.text = "Time: " + timeLeft;
+            }
+
+            if(g.name == "ScoreToWin")
+            {
+                scoreToWin = g.GetComponent<Text>();
+                scoreToWin.text = "Goal: " + Difficulty.ScoreToWin;
+            }
+        }
 
         Time.timeScale = 1;
         pauseObjects = GameObject.FindGameObjectsWithTag("ShowOnPause");
@@ -32,8 +55,37 @@ public class GUI : MonoBehaviour {
         }
     }
 
+    void updateTime()
+    {
+        timeLeft -= Time.deltaTime;
+        time.text = "Time: " + timeLeft.ToString("0.0");
+        
+        if(timeLeft <= 0)
+        {
+            Difficulty.Lower();
+            LowerScore();
+            timeLeft = Difficulty.TimeLeft;
+        }
+    }
+
+    void LowerScore()
+    {
+        scoreCount -= Difficulty.ScorePenalty;
+        if (scoreCount < 0)
+            scoreCount = 0;
+        score.text = "Score: " + scoreCount;
+    }
+   
     void Update()
     {
+        updateTime();
+
+        if(scoreCount == Difficulty.ScoreToWin)
+        {
+            OnGUIGameOver();
+            Time.timeScale = 0;
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (Time.timeScale == 1)
@@ -55,7 +107,7 @@ public class GUI : MonoBehaviour {
         score.text = "Score: " + scoreCount;
     }
 
-    void UnsubscribeEvents()
+    void UnsubscribeEvent()
     {
         //Unsubscribe the events so they don't reference to a destroyed object after reload
         Grid.OnUserScored -= OnGUIScore;
@@ -73,8 +125,13 @@ public class GUI : MonoBehaviour {
                 Text finalScore = g.GetComponent<Text>();
                 finalScore.text = "Score: " + scoreCount;
             }
-        }
 
+            if(g.name == "End status")
+            {
+                Text endStatus = g.GetComponent<Text>();
+                endStatus.text = (scoreCount >= Difficulty.ScoreToWin) ? "You Won" : "You Lost";
+            }
+        }
     }
 
     public void showPaused()
@@ -96,7 +153,8 @@ public class GUI : MonoBehaviour {
     //Reloads the scene
     public void Reload()
     {
-        UnsubscribeEvents();
+        UnsubscribeEvent();
+        Difficulty.ResetVariables();
         SceneManager.LoadScene("Game");
     }
     
@@ -110,7 +168,8 @@ public class GUI : MonoBehaviour {
     //Switch to menu
     public void ToMenu()
     {
-        UnsubscribeEvents();
+        UnsubscribeEvent();
+        Difficulty.ResetVariables();
         SceneManager.LoadScene("Menu");
     }
 
