@@ -3,8 +3,9 @@ using System.Collections;
 
 public class Grid : MonoBehaviour {
 
-    public static int w = 10;
-    public static int h = 25;
+    static private Vector2 size = BorderSize.getSize;
+    public static int w = (int)size.x;
+    public static int h = (int)size.y;
     public static Transform[,] grid = new Transform[w, h];
 
     public delegate void UserScore();

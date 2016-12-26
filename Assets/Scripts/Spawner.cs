@@ -8,7 +8,10 @@ public class Spawner : MonoBehaviour {
     public GameObject[] blocks;
 	// Use this for initialization
 	void Start () {
+
         InitGroup();
+
+        initSpawer();
 
         spawnNext();
 	}
@@ -42,6 +45,10 @@ public class Spawner : MonoBehaviour {
                 x = firstPos.x - 2;
             }
         }
+    }
+    public void initSpawer()
+    {
+        transform.position = new Vector3((int)(BorderSize.getSize.x / 2) + 0.26f , BorderSize.getSize.y - 3);
     }
 
     public void spawnNext()

@@ -127,11 +127,12 @@ public class Difficulty : MonoBehaviour {
     {
         get
         {
+            Vector2 borderSize = BorderSize.getSize;
             switch (_DifficultyLevel)
             {
                 case 1: return 0;
-                case 2: return 5;
-                case 3: return 11;
+                case 2: return (int) (borderSize.x * borderSize.y / 4f * 0.1);
+                case 3: return (int)(borderSize.x * borderSize.y / 4f * 0.3);
                 default: return 0;
             }
         }

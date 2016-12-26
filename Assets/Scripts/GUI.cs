@@ -53,6 +53,8 @@ public class GUI : MonoBehaviour {
         {
             g.SetActive(false);
         }
+
+        BorderSize.initBorder();
     }
 
     void updateTime()

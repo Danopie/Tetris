@@ -68,6 +68,10 @@ public class MenuGUI : MonoBehaviour {
         Difficulty.DifficultyLevel = level + 1;
     }
 
+    public void onSizeChange(int option)
+    {
+        BorderSize.sizeOption = option;
+    }
     public void Exit()
     {
         Application.Quit();
