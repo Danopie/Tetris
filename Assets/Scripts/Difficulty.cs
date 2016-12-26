@@ -36,8 +36,8 @@ public class Difficulty : MonoBehaviour {
             switch(_DifficultyLevel)    
             {
                 case 1: return 1f + DifficultyDecreaseAmount;
-                case 2: return 0.8f + DifficultyDecreaseAmount;
-                case 3: return 0.6f + DifficultyDecreaseAmount;
+                case 2: return 0.5f + DifficultyDecreaseAmount;
+                case 3: return 0.3f + DifficultyDecreaseAmount;
                 default: return 0f;
             }
         }
@@ -118,6 +118,20 @@ public class Difficulty : MonoBehaviour {
                 case 1: return 2;
                 case 2: return 3;
                 case 3: return 4;
+                default: return 0;
+            }
+        }
+    }
+
+    public static int InitGroupAmount
+    {
+        get
+        {
+            switch (_DifficultyLevel)
+            {
+                case 1: return 0;
+                case 2: return 5;
+                case 3: return 11;
                 default: return 0;
             }
         }

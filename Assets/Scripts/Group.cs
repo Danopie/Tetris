@@ -13,16 +13,21 @@ public class Group : MonoBehaviour
     public delegate void GameOver();
     public static event GameOver OnGameOver;
 
+    private bool isRuning = false;
     // Use this for initialization
     void Start()
     {
+    }
+
+    public void Run()
+    {
+        isRuning = true;
         if (!isValidGridPos())
         {
             OnGameOver();
             Destroy(gameObject);
         }
     }
-
     //Reset the fall interval when the scene reloads
     public void ResetFallInterval()
     {
@@ -32,6 +37,8 @@ public class Group : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!isRuning)
+            return;
         // Move Left
         if (playerMoveLeft())
         {
@@ -220,6 +227,23 @@ public class Group : MonoBehaviour
         return true;
     }
 
+    public static bool isValidGridPos(Transform transform)
+    {
+        foreach (Transform child in transform)
+        {
+            Vector2 v = Grid.roundVec2(child.position);
+
+            // Not inside Border?
+            if (!Grid.insideBorder(v))
+                return false;
+
+            // Block in grid cell (and not part of same group)?
+            if (Grid.grid[(int)v.x, (int)v.y] != null)
+                if (Grid.grid[(int)v.x, (int)v.y].parent != transform)
+                    return false;
+        }
+        return true;
+    }
 
     void updateGrid()
     {
@@ -238,4 +262,20 @@ public class Group : MonoBehaviour
         }
     }
 
+    static public void updateGrid(Transform transform)
+    {
+        // Remove old children from grid
+        for (int y = 0; y < Grid.h; ++y)
+            for (int x = 0; x < Grid.w; ++x)
+                if (Grid.grid[x, y] != null)
+                    if (Grid.grid[x, y].parent == transform)
+                        Grid.grid[x, y] = null;
+
+        // Add new children to grid
+        foreach (Transform child in transform)
+        {
+            Vector2 v = Grid.roundVec2(child.position);
+            Grid.grid[(int)v.x, (int)v.y] = child;
+        }
+    }
 }
